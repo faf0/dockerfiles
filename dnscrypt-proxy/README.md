@@ -63,6 +63,10 @@ sudo systemctl restart systemd-resolved.service
 
 ### Test
 
+Resolve an arbitrary domain through the system default nameserver.
+```shell
+nslookup google.com
+```
 
 ## Stop
 
