@@ -57,5 +57,5 @@ resolution occurs remotely through the Tor network.
 
 To stop the container, choose one of these options:
 1. Press Ctrl+C in the terminal where the container is being run.
-2. Run `podman stop tor-client`.
+2. Run `podman stop tor-proxy`.
 
