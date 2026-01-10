@@ -52,10 +52,3 @@ curl -x socks5h://127.0.0.1:9050 https://check.torproject.org/api/ip
 
 The curl command allows DNS to be resolved via the Tor proxy, meaning DNS
 resolution occurs remotely through the Tor network.
-
-#### Stop Proxy
-
-To stop the container, choose one of these options:
-1. Press Ctrl+C in the terminal where the container is being run.
-2. Run `podman stop tor-proxy`.
-

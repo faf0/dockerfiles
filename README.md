@@ -29,10 +29,16 @@ podman images
 podman ps
 ```
 
+## Show Logs
+
+```shell
+podman logs container-id # prefix of ID or name found
+```
+
 ## Stop Containers
 
 ```shell
-podman stop container-id # prefix of ID or name found through `podman ps`
+podman stop container-id # prefix of ID or name found
 ```
 
 ## Free Up Space
