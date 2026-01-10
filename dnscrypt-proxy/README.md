@@ -63,14 +63,8 @@ sudo systemctl restart systemd-resolved.service
 
 ### Test
 
-Resolve an arbitrary domain through the system default nameserver.
+Resolve an arbitrary domain through the system default name server on your
+host:
 ```shell
 nslookup google.com
 ```
-
-## Stop
-
-To stop the container, choose one of these options:
-1. Press Ctrl+C in the terminal where the container is being run.
-2. Run `podman stop dnscrypt-proxy`.
-

@@ -71,10 +71,3 @@ curl -x socks5h://127.0.0.1:1080 https://check.torproject.org/api/ip
 ```
 
 DNS is resolved remotely by the SSH target host.
-
-#### Stop Proxy
-
-To stop the container, choose one of these options:
-1. Press Ctrl+C in the terminal where the container is being run.
-2. Run `podman stop ssh-client`.
-
