@@ -44,7 +44,7 @@ podman run --rm -it \
   tor-proxy
 ```
 
-### Run Application Via Socksify
+### Run Application Via tsocks
 
 Install curl in the tsocks container and use tsocks for curl to connect
 ```shell
@@ -59,7 +59,7 @@ apt-get update && apt-get install -y curl && apt-get clean
 # Switch to the nonroot user:
 su nonroot -s /bin/bash
 
-# Socksify curl:
+# Run curl through tsocks:
 # Update /etc/tsocks.conf as root or create a local one:
 cat > ~/.tsocks.conf << EOF
 server = tor-proxy
