@@ -1,6 +1,6 @@
 # proxychains-ng
 
-Run the static `proxychains-ng` binary within a container.
+Run the `proxychains-ng` tool within a container.
 This tool redirects applications without SOCKS support through a given SOCKS
 proxy.
 It uses the `LD_PRELOAD` method so it only works for dynamic target binaries.
