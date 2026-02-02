@@ -35,6 +35,22 @@ podman ps
 podman logs container-id # prefix of ID or name found
 ```
 
+## Determine Image Entrypoint and Cmd
+
+```shell
+podman inspect image-name
+podman inspect -f '{{.Config.Entrypoint}}' image-name
+podman inspect -f '{{.Config.Cmd}}' image-name
+```
+
+## Get a Shell in Container
+
+In case the image has a shell, you can try to run a container with a shell like `sh` or `bash` as the entrypoint:
+```shell
+podman run --entrypoint sh --rm -it image-name
+podman run --entrypoint bash --rm -it image-name
+```
+
 ## Stop Containers
 
 ```shell
