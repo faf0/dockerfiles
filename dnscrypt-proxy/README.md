@@ -61,6 +61,34 @@ Restart systemd-resolved:
 sudo systemctl restart systemd-resolved.service
 ```
 
+If you want dnscrypt-proxy to be available on a link local address instead of
+localhost on a Linux Podman host with systemd, create a new file, such as
+`/etc/systemd/network/10-lo.network`, with the following contents:
+```
+[Match]
+Name=lo
+
+[Network]
+Address=172.16.0.1/32
+```
+
+Reload the systemd-networkd configuration:
+```
+sudo systemctl reload systemd-networkd.service
+```
+
+Edit `/etc/systemd/resolved.conf`:
+```
+[Resolve]
+DNS=172.16.0.1:5353
+FallbackDNS=
+DNSStubListener=yes
+DNSStubListenerExtra=172.16.0.1
+Domains=~.
+```
+
+Restart systemd-resolved.
+
 ### Test
 
 Resolve an arbitrary domain through the system default name server on your
