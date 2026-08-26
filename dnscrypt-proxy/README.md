@@ -61,15 +61,16 @@ Restart systemd-resolved:
 sudo systemctl restart systemd-resolved.service
 ```
 
-If you want dnscrypt-proxy to be available on a link local address instead of
-localhost on a Linux Podman host with systemd, create a new file, such as
-`/etc/systemd/network/10-lo.network`, with the following contents:
+To share DNS with Wireguard peers, you can have systemd-resolved listen on UDP
+port 53 on a link-local address instead of localhost. To this end, on the
+Podman host, create a new file, such as `/etc/systemd/network/10-lo.network`,
+with the following contents:
 ```
 [Match]
 Name=lo
 
 [Network]
-Address=172.16.0.1/32
+Address=172.16.0.53/32
 ```
 
 Reload the systemd-networkd configuration:
@@ -80,14 +81,16 @@ sudo systemctl reload systemd-networkd.service
 Edit `/etc/systemd/resolved.conf`:
 ```
 [Resolve]
-DNS=172.16.0.1:5353
+DNS=127.0.0.1:5353
 FallbackDNS=
 DNSStubListener=yes
-DNSStubListenerExtra=172.16.0.1
+DNSStubListenerExtra=172.16.0.53
 Domains=~.
 ```
 
 Restart systemd-resolved.
+
+On the Wireguard client, set DNS to 172.16.0.53.
 
 ### Test
 
