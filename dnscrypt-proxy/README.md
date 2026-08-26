@@ -90,7 +90,7 @@ Domains=~.
 
 Restart systemd-resolved.
 
-On the Wireguard client, set DNS to 172.16.0.53.
+On the Wireguard client, set the DNS server to `172.16.0.53`.
 
 ### Test
 
