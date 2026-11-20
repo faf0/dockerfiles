@@ -1,7 +1,7 @@
 # Local CPU LLM & Agentic Coding Container (`llama-modchip` + `OpenCode`)
 
 ## Overview
-This container packages **[llama-modchip](https://github.com)** (a CPU-optimized fork of `llama.cpp` built for running large sparse Mixture-of-Experts models in system RAM) alongside **[OpenCode](https://opencode.ai/)** (an open-source terminal AI coding agent).
+This container packages **[llama-modchip](https://github.com/synchopate/llama-modchip)** (a CPU-optimized fork of `llama.cpp` built for running large sparse Mixture-of-Experts models in system RAM) alongside **[OpenCode](https://opencode.ai/)** (an open-source terminal AI coding agent).
 
 It allows you to run local quantized LLMs and agentic coding workflows without a discrete GPU and without running processes as `root`.
 
@@ -41,7 +41,7 @@ To keep model weights out of the container image and persist code/files generate
 ```sh
 podman run -it --rm \
   --name modchip-dev \
-  --userns=keep-id:uid=$(id -u),gid=$(id -g) \
+  --userns=keep-id:uid=1000,gid=1000 \
   --ulimit memlock=-1 \
   -v "${HOME}/llm-workspace:/workspace" \
   -v "$(pwd)/llama-modchip:/opt/llama-modchip" \
