@@ -1,7 +1,7 @@
-# Local CPU LLM & Agentic Coding Container (`llama-modchip` + `OpenCode`)
+# Local CPU LLM & Agentic Coding Container (`llama-modchip` + `Pi` + `OpenCode`)
 
 ## Overview
-This container packages **[llama-modchip](https://github.com/synchopate/llama-modchip)** (a CPU-optimized fork of `llama.cpp` built for running large sparse Mixture-of-Experts models in system RAM) alongside **[OpenCode](https://opencode.ai/)** (an open-source terminal AI coding agent).
+This container packages **[llama-modchip](https://github.com/synchopate/llama-modchip)** (a CPU-optimized fork of `llama.cpp` built for running large sparse Mixture-of-Experts models in system RAM) alongside the **[Pi](https://pi.dev/)** and **[OpenCode](https://opencode.ai/)** open-source terminal AI coding agents.
 
 It allows you to run local quantized LLMs and agentic coding workflows without a discrete GPU and without running processes as `root`.
 
@@ -14,7 +14,7 @@ It allows you to run local quantized LLMs and agentic coding workflows without a
 ```sh
 podman build \
   -v "$(pwd)/llama-modchip:/opt/llama-modchip" \
-  -t modchip-opencode .
+  -t modchip .
 ```
 
 ### Matching Your Host UID/GID (Optional)
@@ -26,7 +26,7 @@ podman build \
   --build-arg USER_UID=$(id -u) \
   --build-arg USER_GID=$(id -g) \
   -v "$(pwd)/llama-modchip:/opt/llama-modchip" \
-  -t modchip-opencode .
+  -t modchip .
 ```
 
 ## Run
@@ -47,7 +47,7 @@ podman run -it --rm \
   -v "$(pwd)/llama-modchip:/opt/llama-modchip" \
   -p 127.0.0.1:8787:8787 \
   -p 127.0.0.1:4096:4096 \
-  modchip-opencode
+  modchip
 ```
 
 ## Usage Instructions
@@ -71,17 +71,24 @@ Inside the container shell, select and install an LLM:
 - Optional: Run `/opt/llama-modchip/modchip bench` to benchmark your system, determining tokens/second for different scenarios
 - Optional: Run `/opt/llama-modchip/modchip stop` to stop the background server and gateway
 
-### 2. Access OpenCode
-Once the server is running, start OpenCode inside `/workspace` (your mounted input/output project directory):
+### 2. Access Pi
+Once the server is running, start Pi inside `/workspace` (your mounted input/output project directory):
+
+```sh
+pi
+```
+
+- Inside the TUI, type `/model` and press **Enter** to confirm your model.
+- Any files Pi reads or creates in `/workspace` will immediately appear in your mounted host folder (`~/llm-workspace/`).
+
+### 3. Access OpenCode
+Once the server is running, start OpenCode inside `/workspace`:
 
 ```sh
 opencode
 ```
 
-#### Selecting Your Local Model in OpenCode
-1. Inside the OpenCode TUI, type `/models` and press **Enter**.
-2. Choose **`Local Modchip Model`**.
-3. Any files OpenCode reads or creates in `/workspace` will immediately appear in your mounted host folder (`~/llm-workspace/`).
+- Inside the TUI, type `/models` and press **Enter** to confirm your model or choose a different one.
 
 #### Optional: Web UI Access
 OpenCode also supports a browser-based interface.
@@ -91,7 +98,7 @@ opencode serve --hostname 0.0.0.0 --port 4096
 ```
 Access the OpenCode web UI in a browser on the host at http://127.0.0.1:4096/.
 
-### 3. Get Another Shell
+### 4. Get Another Shell
 To get another shell inside the container, run:
 
 ```sh
@@ -106,6 +113,8 @@ podman exec -it --user llm modchip-dev bash
 ## References
 - **llama-modchip (CPU MoE Inference Engine):** https://github.com/synchopate/llama-modchip
 - **llama.cpp (Upstream Inference Engine):** https://github.com/ggml-org/llama.cpp
+- **Pi (AI Coding Agent & Docs):** https://pi.dev/
+- **Pi GitHub Repository:** https://github.com/earendil-works/pi
 - **OpenCode (AI Coding Agent & Docs):** https://opencode.ai/
 - **OpenCode GitHub Repository:** https://github.com/anomalyco/opencode
 

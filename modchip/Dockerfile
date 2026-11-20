@@ -5,17 +5,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install build tools, Python, and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    cmake \
-    ninja-build \
-    git \
-    curl \
     ca-certificates \
+    cmake \
+    curl \
+    git \
+    libcurl4-openssl-dev \
+    libgomp1 \
+    ninja-build \
     python3 \
     python3-pip \
     python3-venv \
-    libcurl4-openssl-dev \
-    libgomp1 \
     sudo \
+    unzip \
     && apt-get clean
 
 # Create a non-root user named 'llm' (UID/GID 1000 if available, otherwise next available)
@@ -29,7 +30,7 @@ RUN if id -u ${USER_UID} >/dev/null 2>&1; then userdel -r $(id -un ${USER_UID});
 RUN usermod -aG sudo "$USERNAME"
 # Configure NOPASSWD so sudo works without password entry
 # Create a sudoers file for the user
-RUN echo "%myuser ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}"
+RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}"
 # Set proper permissions on the sudoers file
 RUN chmod 0440 "/etc/sudoers.d/${USERNAME}"
 
@@ -48,32 +49,55 @@ RUN if [ -f ./install.sh ]; then \
         git clone --depth 1 https://github.com/synchopate/llama-modchip ; \
     fi
 
-# Download OpenCode v2 install script to a file first, inspect/verify non-empty, then run it
-RUN curl -fsSL https://opencode.ai/v2/install -o /tmp/install-opencode.sh && \
-    test -s /tmp/install-opencode.sh && \
-    bash /tmp/install-opencode.sh && \
-    mv /tmp/install-opencode.sh "/home/${USERNAME}/"
+# Install bun
+ENV BUN_INSTALL="/home/${USERNAME}/.bun"
+ENV PATH="${BUN_INSTALL}/bin:${PATH}"
+RUN curl -fsSL https://bun.com/install -o /tmp/install-bun.sh && \
+    test -s /tmp/install-bun.sh && \
+    bash /tmp/install-bun.sh && \
+    mv /tmp/install-bun.sh "${BUN_INSTALL}/" && \
+    ln -s "$(which bun)" "${BUN_INSTALL}/bin/node"
 
+# Install Pi
+RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent
+ENV PATH="/home/${USERNAME}/.pi:${PATH}"
+RUN mkdir -p /home/${USERNAME}/.pi/agent && \
+    printf '%s\n' \
+    '{' \
+    '  "$schema": "https://pi.dev/schemas/models.schema.json",' \
+    '  "providers": {' \
+    '    "llama-modchip": {' \
+    '      "baseUrl": "http://127.0.0.1:8787",' \
+    '      "api": "openai-completions",' \
+    '      "apiKey": "local",' \
+    '      "models": [' \
+    '        {' \
+    '          "id": "llama-modchip"' \
+    '        }' \
+    '      ]' \
+    '    }' \
+    '  }' \
+    '}' > /home/${USERNAME}/.pi/agent/models.json
+
+# Install OpenCode
+RUN bun add -g --trust @opencode/cli
 ENV PATH="/home/${USERNAME}/.opencode/bin:${PATH}"
-
-# Pre-configure OpenCode to connect to the local llama-modchip server
 RUN mkdir -p /home/${USERNAME}/.config/opencode && \
     printf '%s\n' \
     '{' \
     '  "$schema": "https://opencode.ai",' \
+    '  "model": "local/llama-modchip",' \
     '  "provider": {' \
-    '    "llama-modchip": {' \
+    '    "local": {' \
     '      "npm": "@ai-sdk/openai-compatible",' \
-    '      "name": "llama-modchip (Local CPU)",' \
+    '      "name": "Local Server",' \
     '      "options": {' \
-    '        "baseURL": "http://127.0.0.1:8787/v1",' \
-    '        "apiKey": "local",' \
-    '        "timeout": 600000' \
+    '        "baseURL": "http://127.0.0.1:8787",' \
+    '        "apiKey": "local"' \
     '      },' \
     '      "models": {' \
-    '        "local-moe": {' \
-    '          "name": "Local Modchip Model",' \
-    '          "tool_call": true' \
+    '        "llama-modchip": {' \
+    '          "name": "Local Modchip Model"' \
     '        }' \
     '      }' \
     '    }' \
@@ -81,4 +105,4 @@ RUN mkdir -p /home/${USERNAME}/.config/opencode && \
     '}' > /home/${USERNAME}/.config/opencode/opencode.json
 
 WORKDIR /workspace
-CMD ["/bin/bash"]
+CMD ["/usr/bin/env", "bash"]
