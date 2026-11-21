@@ -4,17 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install build tools, Python, and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     ca-certificates \
-    cmake \
     curl \
-    git \
-    libcurl4-openssl-dev \
-    libgomp1 \
-    ninja-build \
     python3 \
-    python3-pip \
-    python3-venv \
     sudo \
     unzip \
     && apt-get clean
